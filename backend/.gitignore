@@ -1,0 +1,20 @@
+# Node.js
+node_modules/       # optional, but recommended
+npm-debug.log
+yarn-error.log
+
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# User uploads
+upload/
+uploads/

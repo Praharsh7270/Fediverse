@@ -1,0 +1,118 @@
+/* FeedPage.css */
+
+.feed-card {
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fdfdfd;
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.2s ease;
+}
+
+.feed-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.feed-img-container {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.feed-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+
+.feed-container {
+  width: 100%;
+  height: 90vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.feed-text-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+}
+
+
+
+
+
+
+
+
+
+
+/* 
+.type-text {
+  font-size: 3.5rem; /* increased from 2.8rem */
+  /* font-weight: 800;
+  color: #000000f3;
+  font-family: 'Poppins', sans-serif;
+  text-shadow: 0 0 16px rgba(165, 180, 180, 0.4);
+} */
+
+
+/* Responsive size */
+/* @media (max-width: 768px) {
+  .type-text {
+    font-size: 2rem;
+  }
+} */
+
+/* @media (max-width: 480px) {
+  .type-text {
+    font-size: 1.6rem;
+  }
+} */
+
+
+/* .type-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+} */
+
+/* .type-text::after {
+  content: "|";
+  animation: blink 0.8s infinite;
+  margin-left: 3px;
+} */
+
+/* @keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  50.01%, 100% {
+    opacity: 0;
+  }
+} */ 
+.feed-container {
+  margin: 0;
+  padding: 0;
+  width: 100vw; /* Full viewport width */
+}
+
+.carousel,
+.carousel-inner,
+.carousel-item,
+.carousel-item img {
+  width: 100vw; /* Full width */
+}
+
+.carousel-item img {
+  height: 100vh; /* Full height */
+  object-fit: cover; /* No stretching, full coverage */
+}
