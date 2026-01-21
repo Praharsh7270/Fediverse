@@ -18,6 +18,17 @@ Photoflux explores the future of decentralized social media using:
 
 ---
 
+> ⚠️ **IMPORTANT**
+>
+> If you are using **ngrok** for local development, you must run the following command **every time you restart the application**:
+>
+> ```bash
+> ngrok http 4000
+> ```
+>
+> This is required because ngrok generates a new public URL on each restart, which must be updated in your application configuration (e.g., `BASE_URL`).
+
+
 
 ## 🚀 Key Features
 
