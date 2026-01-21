@@ -18,6 +18,7 @@ Photoflux explores the future of decentralized social media using:
 
 ---
 
+
 ## 🚀 Key Features
 
 ### Core Platform
