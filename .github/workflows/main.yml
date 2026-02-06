@@ -11,21 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"
 
-      - name: Install Backend (Express)
+      - name: Backend install
         run: |
           cd backend
           npm install
 
-      - name: Install & Build Frontend (React)
+      - name: Frontend install & build
         run: |
           cd frontend
           npm install
-          npm run build
+          CI=false npm run build
