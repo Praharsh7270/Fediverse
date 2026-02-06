@@ -13,11 +13,11 @@ const Home = () => {
     <div className="feed-container" style={{ backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
       
       {/* Title */}
-      <div className="feed-text-wrapper text-center py-4">
-        <h1 style={{ fontFamily: "'Segoe UI Black', sans-serif", marginBottom: "10px" }}>
-          🌐 Welcome to <span style={{ color: "#0d6efd" }}>Fediverse</span>
+      <div className="feed-text-wrapper text-center py-4 bg-dark bg-opacity-50 rounded-5 ">
+        <h1 className='text-white' style={{ fontFamily: "'Segoe UI Black', sans-serif", marginBottom: "10px" }}>
+          🌐 Welcome to <span style={{ color: "#ffe066" }}>Fediverse</span>
         </h1>
-        <p style={{ fontSize: "18px", color: "#6c757d", maxWidth: "700px", margin: "0 auto" }}>
+        <p style={{ fontSize: "18px", color: "#ffff", maxWidth: "700px", margin: "0 auto" }}>
           Connect, share, and explore across the decentralized web — powered by freedom, community, and collaboration.
         </p>
       </div>
