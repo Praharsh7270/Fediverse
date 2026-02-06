@@ -73,6 +73,7 @@
 
 // export default Navbar;
 
+
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -88,29 +89,14 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top shadow-sm">
+    <nav
+      className="navbar navbar-expand-lg bg-dark border-bottom border-body"
+      data-bs-theme="dark"
+    >
       <div className="container-fluid px-3">
-        {/* Brand */}
-        <Link className="navbar-brand fw-bold d-flex align-items-center" to="/">
-          <span style={{ fontSize: "1.3rem" }}>📸</span>
-          <span className="ms-2">Photoflux</span>
-        </Link>
+        <Link className="navbar-brand" to="/">Photoflux</Link>
 
-        {/* Toggle button (IMPORTANT for mobile) */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarContent"
-          aria-controls="navbarContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        {/* Navbar content */}
-        <div className="collapse navbar-collapse" id="navbarContent">
+        <div className="collapse navbar-collapse">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             {isLoggedIn && (
               <>
@@ -124,30 +110,20 @@ function Navbar() {
                   <Link className="nav-link" to="/post">Post</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to={`/followers/${username}`}>
-                    Profile
-                  </Link>
+                  <Link className="nav-link" to={`/followers/${username}`}>Profile</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/remote-search">
-                    Remote Search
-                  </Link>
+                  <Link className="nav-link" to="/remote-search">Remote Search</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/local-users">
-                    Local Users
-                  </Link>
+                  <Link className="nav-link" to="/local-users">Local Users</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to={`/users/${username}/outbox`}>
-                    My Outbox
-                  </Link>
+                  <Link className="nav-link" to={`/users/${username}/outbox`}>My Outbox</Link>
                 </li>
               </>
             )}
           </ul>
-
-          {/* Auth actions */}
           {isLoggedIn ? (
             <button
               onClick={handleLogout}
@@ -156,14 +132,14 @@ function Navbar() {
               Logout
             </button>
           ) : (
-            <div className="d-flex auth-buttons">
+            <>
               <Link className="btn btn-outline-light me-2" to="/login">
                 Login
               </Link>
-              <Link className="btn btn-success signup-btn" to="/signup">
+              <Link className="btn btn-outline-success" to="/signup">
                 Sign Up
               </Link>
-            </div>
+            </>
           )}
         </div>
       </div>
@@ -172,5 +148,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
-
