@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import FeedPage from "./Pages/Feed";
 import PostForm from "./Pages/PostForm";
 import Signup from "./Pages/Register";
+import VerifyOtp from "./Pages/VerifyOtp";
 import Login from "./Pages/Login";
 // import UserList from "./Pages/UserList";
 import UserProfile from "./Pages/UserProfile";
@@ -25,16 +26,17 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/post" element={<PostForm />} />        
-        <Route path="/profile/:username" element={<UserProfile />} />        
+        <Route path="/post" element={<PostForm />} />
+        <Route path="/profile/:username" element={<UserProfile />} />
         <Route path="/debug-inbox" element={<InboxDebug />} />
         <Route path="/followers/:username" element={<FollowersPage />} />
         <Route path="/remote-search" element={<RemoteSearch />} />
         <Route path="/local-users" element={<LocalUserSearch />} />
-        <Route path="/users/:username/outbox" element={< UserOutboxPage/>} />        
+        <Route path="/users/:username/outbox" element={< UserOutboxPage />} />
       </Routes>
-      <Footer/>
+      <Footer />
     </Router>
   );
 }

@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true, select: false },
   // displayName: String,
-  email: { type: String,  unique: true },
+  email: { type: String, unique: true },
   actorUrl: String,
   inbox: String,
   outbox: String,
@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema({
   privateKey: String,
   followers: { type: [String], default: [] },
   following: { type: [String], default: [] },
+  isVerified: { type: Boolean, default: false },
+  verifyOtp: String,
+  verifyOtpExpairy: Date,
 });
 
 userSchema.pre("save", async function (next) {

@@ -28,6 +28,7 @@
     "node-fetch": "^2.7.0",
     "nodemailer": "^7.0.5",
     "replicate": "^1.0.1",
+    "sib-api-v3-sdk": "^8.5.0",
     "uuid": "^11.1.0"
   }
 }
