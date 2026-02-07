@@ -7,7 +7,7 @@ yarn-error.log
 # Logs
 logs/
 *.log
-
+.env
 # OS files
 .DS_Store
 Thumbs.db
