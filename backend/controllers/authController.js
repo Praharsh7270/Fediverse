@@ -15,24 +15,31 @@ exports.register = async (req, res) => {
   let user = await User.findOne({ $or: [{ email }, { username }] });
 
   if (user) {
+    // 🛡️ Fix: Guard against mismatched emails
+    if (user.email !== email) {
+      return res.status(409).json({
+        success: false,
+        message: "Username already exists. Please choose another."
+      });
+    }
+
     if (user.isVerified) {
       return res.status(409).json({ success: false, message: "User already Exist, Please Login" });
     }
 
-    // User exists but NOT verified -> Resend OTP logic
-    // Update fields
+
     const otp = crypto.randomInt(100000, 1000000).toString();
     const verifyOtpExpairy = Date.now() + 10 * 60 * 1000;
 
-    user.username = username; // Update username if they changed it
-    user.password = password; // Update password if they changed it
+    user.username = username;
+    user.password = password;
     user.verifyOtp = otp;
     user.verifyOtpExpairy = verifyOtpExpairy;
     user.otpAttempts = 0;
     user.otpLockUntil = undefined;
     await user.save();
 
-    // Send email (same logic as new user)
+    // Send email 
     const mailoption = {
       to: email,
       subject: "Verify your Fediverse account 🔐",
@@ -50,7 +57,7 @@ exports.register = async (req, res) => {
   }
 
   // New User Logic
-  // 3️⃣ Secure OTP Generation
+
   const otp = crypto.randomInt(100000, 1000000).toString();
   const verifyOtpExpairy = Date.now() + 10 * 60 * 1000;
 
@@ -75,7 +82,7 @@ exports.register = async (req, res) => {
   }
 
   try {
-    // 4️⃣ Fail if email fails
+
     await sendEmail(mailoption);
     console.log("OTP email sent to:", email);
   } catch (err) {
@@ -105,7 +112,7 @@ exports.verifyOtp = async (req, res) => {
       return res.status(200).json({ success: true, message: "User already verified", next: "Login" });
     }
 
-    // 2️⃣ Rate Limiting Check
+
     if (user.otpLockUntil && user.otpLockUntil > Date.now()) {
       const waitTime = Math.ceil((user.otpLockUntil - Date.now()) / 60000);
       return res.status(429).json({ success: false, message: `Too many attempts. Try again in ${waitTime} minutes.` });
@@ -187,7 +194,7 @@ exports.verifyOtp = async (req, res) => {
 exports.login = async (req, res) => {
   const { username, password } = req.body;
 
-  console.log("📥 Login attempt:", username);
+  console.log("📥 Login attempt:", username ? `${username.slice(0, 3)}***` : "unknown");
 
   const user = await User.findOne({ username }).select("+password +privateKey");
 
@@ -195,7 +202,7 @@ exports.login = async (req, res) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-  // 1️⃣ Enforce Email Verification
+  //  Enforce Email Verification
   if (!user.isVerified) {
     return res.status(403).json({ error: "Email not verified. Please verify your email first." });
   }
