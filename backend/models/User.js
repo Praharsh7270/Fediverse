@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   inbox: String,
   outbox: String,
   publicKey: String,
-  privateKey: String,
+  privateKey: { type: String, select: false }, // Private key should not be returned by default
   followers: { type: [String], default: [] },
   following: { type: [String], default: [] },
   isVerified: { type: Boolean, default: false },
@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre("save", async function (next) {
+  // Validate username is not undefined or empty
+  if (!this.username || this.username === "undefined" || this.username.trim() === "") {
+    const error = new Error("Username cannot be undefined or empty");
+    return next(error);
+  }
+
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
