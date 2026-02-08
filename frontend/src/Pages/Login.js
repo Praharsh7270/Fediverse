@@ -54,60 +54,90 @@ function Login() {
   };
 
   return (
-    <div className="login-page d-flex align-items-center justify-content-center">
-      <div className="login-card shadow">
-        <h2 className="text-center fs-4 fs-md-3 mb-4">
-          🌐 Welcome to{" "}
-          <span className="gradient-text">Fediverse</span>
-        </h2>
-
-        <form
-          noValidate
-          className={`needs-validation ${validated ? "was-validated" : ""}`}
-          onSubmit={handleLogin}
-        >
-          {/* Username */}
-          <div className="form-floating mb-3">
-            <input
-              type="text"
-              id="floatingUsername"
-              name="username"
-              className="form-control"
-              placeholder="Username"
-              onChange={handleChange}
-              value={formData.username}
-              required
+    <div className="container-fluid vh-100 p-0">
+      <div className="row g-0 h-100">
+        {/* Left Side: Image */}
+        <div className="col-md-6 d-none d-md-block">
+          <div className="h-100 w-100 position-relative">
+            <img
+              src="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+              alt="Login Cover"
+              className="w-100 h-100"
+              style={{ objectFit: "cover" }}
             />
-            <label htmlFor="floatingUsername">Username</label>
-            <div className="invalid-feedback">Please enter your username.</div>
-          </div>
-
-          {/* Password */}
-          <div className="form-floating mb-4">
-            <input
-              type="password"
-              id="floatingPassword"
-              name="password"
-              className="form-control"
-              placeholder="Password"
-              onChange={handleChange}
-              value={formData.password}
-              required
-            />
-            <label htmlFor="floatingPassword">Password</label>
-            <div className="invalid-feedback">
-              Please enter your password.
+            <div className="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-25"></div>
+            <div className="position-absolute bottom-0 start-0 p-5 text-white">
+              <h2 className="fw-bold display-6">Welcome Back!</h2>
+              <p className="lead">Connect to the decentralized world.</p>
             </div>
           </div>
+        </div>
 
-          <button
-            className="btn btn-login-main w-100"
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+        {/* Right Side: Form */}
+        <div className="col-md-6 d-flex align-items-center justify-content-center bg-light">
+          <div className="p-4 p-md-5 shadow-lg bg-white rounded-4" style={{ maxWidth: "450px", width: "90%" }}>
+
+            <div className="text-center mb-4">
+              <h1 className="fw-bold mb-2">Fediverse</h1>
+              <p className="text-muted">Login to your account</p>
+            </div>
+
+            <form
+              noValidate
+              className={`needs-validation ${validated ? "was-validated" : ""}`}
+              onSubmit={handleLogin}
+            >
+              {/* Username */}
+              <div className="form-floating mb-3">
+                <input
+                  type="text"
+                  id="floatingUsername"
+                  name="username"
+                  className="form-control rounded-3"
+                  placeholder="Username"
+                  onChange={handleChange}
+                  value={formData.username}
+                  required
+                />
+                <label htmlFor="floatingUsername">Username</label>
+                <div className="invalid-feedback">Please enter your username.</div>
+              </div>
+
+              {/* Password */}
+              <div className="form-floating mb-4">
+                <input
+                  type="password"
+                  id="floatingPassword"
+                  name="password"
+                  className="form-control rounded-3"
+                  placeholder="Password"
+                  onChange={handleChange}
+                  value={formData.password}
+                  required
+                />
+                <label htmlFor="floatingPassword">Password</label>
+                <div className="invalid-feedback">
+                  Please enter your password.
+                </div>
+              </div>
+
+              <div className="d-grid gap-2 mb-3">
+                <button
+                  className="btn btn-primary btn-lg rounded-3"
+                  type="submit"
+                  disabled={loading}
+                  style={{ backgroundColor: "#4f9cff", borderColor: "#4f9cff" }}
+                >
+                  {loading ? "Logging in..." : "Login"}
+                </button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-muted small">Don't have an account? <a href="/signup" className="text-decoration-none fw-bold" style={{ color: "#4f9cff" }}>Sign up</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );
