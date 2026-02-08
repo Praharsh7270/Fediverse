@@ -75,7 +75,7 @@ exports.loginedUser = async (req, res) => {
     }
     const userData = await User.findById(req.user.id).select("-password");
     if (!userData) return res.status(404).json({ error: "User not found" });
-    res.json(userData);
+    res.json({ username: userData.username });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch user", details: error.message });
   }

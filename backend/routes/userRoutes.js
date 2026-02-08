@@ -12,14 +12,14 @@ const {
 
 const { verifyToken } = require("../middleware/authMiddleware");
 const User = require("../models/User");
-
+router.get("/me", verifyToken, loginedUser);
 router.get("/", getAllUsers);
 router.get("/:id", getUserById);
 router.post("/:username/follow", verifyToken, followUser);
 router.post("/:username/unfollow", verifyToken, unfollowUser);
 router.get("/:username/posts", getUserPosts);
 router.put("/:id", verifyToken, updateUser);
-router.get("/me", verifyToken, loginedUser);
+
 
 
 
