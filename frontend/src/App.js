@@ -13,6 +13,7 @@ import FollowersPage from "./Pages/FollowersPage";
 import RemoteSearch from "./Pages/RemoteSearch";
 import UserOutboxPage from "./Pages/UserOutboxPage";
 import LocalUserSearch from "./Pages/LocalUserSearch";
+import ForgotPassword from "./Pages/ForgotPassword";
 import Home from "./Pages/home";
 import Footer from "./components/Footer";
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/feed" element={<FeedPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/login" element={<Login />} />
             <Route path="/post" element={<PostForm />} />
             <Route path="/profile/:username" element={<UserProfile />} />
