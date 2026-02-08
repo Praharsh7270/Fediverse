@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { 
+const {
+  loginedUser,
+  updateUser,
   getAllUsers,
   getUserById,
   getUserPosts,
   followUser,
-  unfollowUser 
+  unfollowUser
 } = require("../controllers/userController");
 
 const { verifyToken } = require("../middleware/authMiddleware");
@@ -16,6 +18,8 @@ router.get("/:id", getUserById);
 router.post("/:username/follow", verifyToken, followUser);
 router.post("/:username/unfollow", verifyToken, unfollowUser);
 router.get("/:username/posts", getUserPosts);
+router.put("/:id", verifyToken, updateUser);
+router.get("/me", verifyToken, loginedUser);
 
 
 
