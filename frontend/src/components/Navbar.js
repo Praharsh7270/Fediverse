@@ -124,7 +124,7 @@ function Navbar() {
                   <Link className="nav-link" to="/post">Post</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to={`/followers/${username}`}>
+                  <Link className="nav-link" to={`/profile/${username}`}>
                     Profile
                   </Link>
                 </li>

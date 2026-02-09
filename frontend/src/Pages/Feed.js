@@ -3,12 +3,13 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
-import { 
-  FaHeart, 
-  FaRegHeart, 
-  FaShare, 
-  FaSun, 
-  FaMoon, 
+import { Link } from "react-router-dom"; // Import Link
+import {
+  FaHeart,
+  FaRegHeart,
+  FaShare,
+  FaSun,
+  FaMoon,
   FaCommentDots,
   FaTrash,
   FaEdit,
@@ -22,6 +23,9 @@ const FeedPage = () => {
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Get username from localStorage for profile link
+  const username = localStorage.getItem("username");
 
   // Comments
   const [showModal, setShowModal] = useState(false);
@@ -155,7 +159,7 @@ const FeedPage = () => {
   // Delete Comment Function
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm("Are you sure you want to delete this comment?")) return;
-    
+
     try {
       await axios.delete(
         `${process.env.REACT_APP_API_URL}/api/comments/${commentId}`,
@@ -165,7 +169,7 @@ const FeedPage = () => {
           },
         }
       );
-      
+
       // Remove comment from state
       setComments(prev => prev.filter(comment => comment._id !== commentId));
     } catch (err) {
@@ -187,7 +191,7 @@ const FeedPage = () => {
 
   const handleEditComment = async (commentId) => {
     if (!editCommentText.trim()) return;
-    
+
     try {
       const res = await axios.put(
         `${process.env.REACT_APP_API_URL}/api/comments/${commentId}`,
@@ -198,14 +202,14 @@ const FeedPage = () => {
           },
         }
       );
-      
+
       // Update comment in state
-      setComments(prev => 
-        prev.map(comment => 
+      setComments(prev =>
+        prev.map(comment =>
           comment._id === commentId ? res.data : comment
         )
       );
-      
+
       setEditingComment(null);
       setEditCommentText("");
     } catch (err) {
@@ -235,18 +239,18 @@ const FeedPage = () => {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
     });
   };
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+      <div className={`d-flex justify-content-center align-items-center min-vh-100 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
         <div className="text-center">
-          <div className="spinner-border text-primary" style={{width: '3rem', height: '3rem'}} role="status">
+          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
           <p className="mt-3 text-muted">Loading your feed...</p>
@@ -257,7 +261,7 @@ const FeedPage = () => {
 
   if (error) {
     return (
-      <div className="min-vh-100 d-flex justify-content-center align-items-center bg-light">
+      <div className={`min-vh-100 d-flex justify-content-center align-items-center ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
         <div className="text-center p-5">
           <div className="display-1 mb-3">😕</div>
           <h4 className="mb-3">Something went wrong</h4>
@@ -271,30 +275,30 @@ const FeedPage = () => {
   }
 
   return (
-    <div className="min-vh-100 bg-light">
+    <div className={`min-vh-100 ${darkMode ? 'bg-dark' : 'bg-light'}`}>
       {/* Modern Header */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top">
+      <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-secondary' : 'navbar-light bg-white'} border-bottom shadow-sm sticky-top`}>
         <div className="container">
           <a className="navbar-brand fw-bold fs-3 text-primary" href="/" style={{ fontFamily: "'Poppins', sans-serif" }}>
             PhotoFlux
           </a>
-          
+
           <div className="d-flex align-items-center">
-            <button 
-              className="btn btn-outline-secondary rounded-circle me-3"
+            <button
+              className={`btn ${darkMode ? 'btn-outline-light' : 'btn-outline-secondary'} rounded-circle me-3`}
               onClick={() => setDarkMode(!darkMode)}
             >
               {darkMode ? <FaSun /> : <FaMoon />}
             </button>
-            
+
             <div className="dropdown">
-              <button 
-                className="btn btn-primary rounded-pill px-4"
-                data-bs-toggle="dropdown"
+              <Link
+                to={`/profile/${username}`}
+                className="btn btn-primary rounded-pill px-4 text-decoration-none"
               >
                 <i className="fas fa-user me-2"></i>
                 Profile
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -306,14 +310,14 @@ const FeedPage = () => {
           <div className="col-lg-8 mx-auto">
             {feed.length === 0 ? (
               <div className="text-center py-5">
-                <div className="card border-0 shadow-sm">
+                <div className={`card border-0 shadow-sm ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`}>
                   <div className="card-body py-5">
                     <div className="display-1 text-muted mb-3">📷</div>
                     <h4 className="card-title mb-3">No Posts Yet</h4>
-                    <p className="card-text text-muted mb-4">Follow users to see their posts or create your own!</p>
-                    <button className="btn btn-primary px-4">
+                    <p className={`card-text mb-4 ${darkMode ? 'text-light' : 'text-muted'}`}>Follow users to see their posts or create your own!</p>
+                    <Link to="/post" className="btn btn-primary px-4">
                       Create Your First Post
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -325,12 +329,12 @@ const FeedPage = () => {
                   const hasImage = post.image || post.imageUrl;
 
                   return (
-                    <div className="card mb-4 shadow-sm border-0 rounded-3 overflow-hidden" key={post._id}>
+                    <div className={`card mb-4 shadow-sm border-0 rounded-3 overflow-hidden ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`} key={post._id}>
                       {/* Post Header */}
-                      <div className="card-header bg-white border-0 d-flex align-items-center justify-content-between py-3">
+                      <div className={`card-header border-0 d-flex align-items-center justify-content-between py-3 ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`}>
                         <div className="d-flex align-items-center">
-                          <div className="rounded-circle overflow-hidden me-3 border border-3 border-primary" style={{width: '50px', height: '50px'}}>
-                            <img 
+                          <div className="rounded-circle overflow-hidden me-3 border border-3 border-primary" style={{ width: '50px', height: '50px' }}>
+                            <img
                               src={post.author?.profilePic || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`}
                               alt="Profile"
                               className="w-100 h-100 object-fit-cover"
@@ -338,13 +342,13 @@ const FeedPage = () => {
                           </div>
                           <div>
                             <h6 className="mb-0 fw-bold">{post.author?.username || "unknown"}</h6>
-                            <small className="text-muted">
+                            <small className={darkMode ? "text-light" : "text-muted"}>
                               <i className="fas fa-clock me-1"></i>
                               {post.createdAt ? formatDate(post.createdAt) : "Recently"}
                             </small>
                           </div>
                         </div>
-                        <button className="btn btn-link text-muted">
+                        <button className={`btn btn-link ${darkMode ? "text-light" : "text-muted"}`}>
                           <i className="fas fa-ellipsis-h"></i>
                         </button>
                       </div>
@@ -373,37 +377,37 @@ const FeedPage = () => {
                             <div className="row">
                               <div className="col-md-6">
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">Pregnancies</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>Pregnancies</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 2</div>
                                 </div>
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">Blood Pressure</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>Blood Pressure</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 70</div>
                                 </div>
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">Insulin Level</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>Insulin Level</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 85</div>
                                 </div>
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">Diabetes Pedigree</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>Diabetes Pedigree</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 0.45</div>
                                 </div>
                               </div>
                               <div className="col-md-6">
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">Glucose Level</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>Glucose Level</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 130</div>
                                 </div>
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">Skin Thickness</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>Skin Thickness</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 32</div>
                                 </div>
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">BMI</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>BMI</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 28.5</div>
                                 </div>
                                 <div className="mb-3">
-                                  <small className="text-muted d-block mb-1">Age</small>
+                                  <small className={`${darkMode ? 'text-light' : 'text-muted'} d-block mb-1`}>Age</small>
                                   <div className="badge bg-info text-white px-3 py-2">e.g. 35</div>
                                 </div>
                               </div>
@@ -418,34 +422,34 @@ const FeedPage = () => {
                         {/* Post Caption */}
                         <div className="p-4">
                           <h5 className="fw-bold mb-3">{post.caption || "No caption"}</h5>
-                          
+
                           {/* Post Actions */}
                           <div className="d-flex justify-content-between align-items-center mb-3">
                             <div className="d-flex gap-3">
-                              <button 
+                              <button
                                 className="btn btn-link p-0 text-decoration-none"
                                 onClick={() => handleLike(post._id)}
                               >
                                 {isLiked ? (
                                   <FaHeart className="text-danger" size={24} />
                                 ) : (
-                                  <FaRegHeart className="text-dark" size={24} />
+                                  <FaRegHeart className={darkMode ? "text-white" : "text-dark"} size={24} />
                                 )}
                               </button>
-                              <button 
+                              <button
                                 className="btn btn-link p-0 text-decoration-none"
                                 onClick={() => openCommentModal(post._id)}
                               >
-                                <FaCommentDots className="text-dark" size={24} />
+                                <FaCommentDots className={darkMode ? "text-white" : "text-dark"} size={24} />
                               </button>
-                              <button 
+                              <button
                                 className="btn btn-link p-0 text-decoration-none"
                                 onClick={() => copyShareLink(post._id)}
                               >
-                                <FaShare className="text-dark" size={24} />
+                                <FaShare className={darkMode ? "text-white" : "text-dark"} size={24} />
                               </button>
                             </div>
-                            <span className="text-muted">
+                            <span className={darkMode ? "text-light" : "text-muted"}>
                               <i className="fas fa-heart text-danger me-1"></i>
                               {likeCount} likes
                             </span>
@@ -453,7 +457,7 @@ const FeedPage = () => {
 
                           {/* Quick Links (like your screenshot) */}
                           {post.caption?.includes("Diabetes Care") && (
-                            <div className="mt-4 pt-3 border-top">
+                            <div className={`mt-4 pt-3 border-top ${darkMode ? 'border-secondary' : ''}`}>
                               <h6 className="fw-bold mb-3">Quick Links</h6>
                               <div className="d-flex flex-wrap gap-2">
                                 <a href="#" className="btn btn-outline-primary btn-sm rounded-pill">
@@ -483,7 +487,7 @@ const FeedPage = () => {
       {showModal && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content rounded-4 border-0 shadow-lg">
+            <div className={`modal-content rounded-4 border-0 shadow-lg ${darkMode ? 'bg-dark text-white' : 'bg-white'}`}>
               <div className="modal-header bg-primary text-white border-0 rounded-top-4">
                 <h5 className="modal-title fw-bold mb-0">
                   <i className="fas fa-comments me-2"></i>
@@ -491,7 +495,7 @@ const FeedPage = () => {
                 </h5>
                 <button type="button" className="btn-close btn-close-white" onClick={closeModal}></button>
               </div>
-              
+
               <div className="modal-body p-0" style={{ maxHeight: '500px', overflowY: 'auto' }}>
                 {comments.length === 0 ? (
                   <div className="text-center py-5">
@@ -502,11 +506,11 @@ const FeedPage = () => {
                 ) : (
                   <div className="p-4">
                     {comments.map((comment) => (
-                      <div key={comment._id} className="mb-4 pb-3 border-bottom">
+                      <div key={comment._id} className={`mb-4 pb-3 border-bottom ${darkMode ? 'border-secondary' : ''}`}>
                         <div className="d-flex justify-content-between align-items-start mb-2">
                           <div className="d-flex align-items-center">
-                            <div className="rounded-circle overflow-hidden me-3" style={{width: '40px', height: '40px'}}>
-                              <img 
+                            <div className="rounded-circle overflow-hidden me-3" style={{ width: '40px', height: '40px' }}>
+                              <img
                                 src={comment.user?.profilePic || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`}
                                 alt="User"
                                 className="w-100 h-100 object-fit-cover"
@@ -519,19 +523,19 @@ const FeedPage = () => {
                               </small>
                             </div>
                           </div>
-                          
+
                           {/* Edit/Delete buttons (only for comment owner or post owner) */}
                           {(comment.user?._id === userId || comment.userId === userId) && (
                             <div className="dropdown">
-                              <button 
+                              <button
                                 className="btn btn-link text-muted p-0"
                                 data-bs-toggle="dropdown"
                               >
                                 <i className="fas fa-ellipsis-h"></i>
                               </button>
-                              <ul className="dropdown-menu dropdown-menu-end">
+                              <ul className={`dropdown-menu dropdown-menu-end ${darkMode ? 'dropdown-menu-dark' : ''}`}>
                                 <li>
-                                  <button 
+                                  <button
                                     className="dropdown-item"
                                     onClick={() => startEditComment(comment)}
                                   >
@@ -539,7 +543,7 @@ const FeedPage = () => {
                                   </button>
                                 </li>
                                 <li>
-                                  <button 
+                                  <button
                                     className="dropdown-item text-danger"
                                     onClick={() => handleDeleteComment(comment._id)}
                                   >
@@ -550,25 +554,25 @@ const FeedPage = () => {
                             </div>
                           )}
                         </div>
-                        
+
                         {/* Comment Content - Edit Mode or View Mode */}
                         {editingComment === comment._id ? (
                           <div className="mt-3">
                             <textarea
-                              className="form-control mb-2"
+                              className={`form-control mb-2 ${darkMode ? 'bg-secondary text-white border-secondary' : ''}`}
                               value={editCommentText}
                               onChange={(e) => setEditCommentText(e.target.value)}
                               rows="2"
                             />
                             <div className="d-flex gap-2">
-                              <button 
+                              <button
                                 className="btn btn-sm btn-success"
                                 onClick={() => handleEditComment(comment._id)}
                               >
                                 Save
                               </button>
-                              <button 
-                                className="btn btn-sm btn-outline-secondary"
+                              <button
+                                className={`btn btn-sm btn-outline-secondary ${darkMode ? 'text-white' : ''}`}
                                 onClick={cancelEditComment}
                               >
                                 Cancel
@@ -583,19 +587,19 @@ const FeedPage = () => {
                   </div>
                 )}
               </div>
-              
-              <div className="modal-footer border-0 bg-light rounded-bottom-4">
+
+              <div className={`modal-footer border-0 rounded-bottom-4 ${darkMode ? 'bg-secondary' : 'bg-light'}`}>
                 <div className="w-100">
                   <div className="input-group">
                     <input
                       type="text"
-                      className="form-control rounded-pill border-0 shadow-sm"
+                      className={`form-control rounded-pill border-0 shadow-sm ${darkMode ? 'bg-dark text-white' : ''}`}
                       placeholder="Write a comment..."
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleCommentSubmit()}
                     />
-                    <button 
+                    <button
                       className="btn btn-primary rounded-pill ms-2 px-4"
                       onClick={handleCommentSubmit}
                       disabled={!newComment.trim()}
@@ -649,15 +653,15 @@ const FeedPage = () => {
           }
         }
       `}</style>
-      
+
       {/* Add Font Awesome for icons */}
-      <link 
-        rel="stylesheet" 
+      <link
+        rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       />
       {/* Add Google Fonts */}
-      <link 
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" 
+      <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
         rel="stylesheet"
       />
     </div>
