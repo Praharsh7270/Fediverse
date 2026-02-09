@@ -3,15 +3,8 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
-<<<<<<< HEAD
+
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  FaHeart, 
-  FaRegHeart, 
-  FaShare, 
-  FaSun, 
-  FaMoon, 
-=======
 import { Link } from "react-router-dom"; // Import Link
 import {
   FaHeart,
@@ -19,7 +12,7 @@ import {
   FaShare,
   FaSun,
   FaMoon,
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
+
   FaCommentDots,
   FaTrash,
   FaEdit,
@@ -310,48 +303,29 @@ const FeedPage = () => {
   }
 
   return (
-<<<<<<< HEAD
-    <div className="min-vh-100 bg-light feed-page">
+    <div className={`min-vh-100 feed-page ${darkMode ? "bg-dark text-white" : "bg-light"}`}>
       {/* Modern Header */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top feed-navbar">
-=======
-    <div className={`min-vh-100 ${darkMode ? 'bg-dark' : 'bg-light'}`}>
-      {/* Modern Header */}
-      <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-secondary' : 'navbar-light bg-white'} border-bottom shadow-sm sticky-top`}>
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
+      <nav className={`navbar navbar-expand-lg ${darkMode ? "navbar-dark bg-dark border-secondary" : "navbar-light bg-white"} border-bottom shadow-sm sticky-top feed-navbar`}>
         <div className="container">
           <a className="navbar-brand fw-bold fs-3 text-primary" href="/" style={{ fontFamily: "'Poppins', sans-serif" }}>
             PhotoFlux
           </a>
 
           <div className="d-flex align-items-center">
-<<<<<<< HEAD
-            <button 
-              className="btn btn-outline-secondary rounded-circle me-3 feed-icon-btn"
-=======
             <button
-              className={`btn ${darkMode ? 'btn-outline-light' : 'btn-outline-secondary'} rounded-circle me-3`}
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
+              className={`btn ${darkMode ? "btn-outline-light" : "btn-outline-secondary"} rounded-circle me-3 feed-icon-btn`}
               onClick={() => setDarkMode(!darkMode)}
             >
               {darkMode ? <FaSun /> : <FaMoon />}
             </button>
 
-            <div className="dropdown">
-<<<<<<< HEAD
-              <button 
-                className="btn btn-primary rounded-pill px-4 feed-profile-btn"
-                data-bs-toggle="dropdown"
-=======
-              <Link
-                to={`/profile/${username}`}
-                className="btn btn-primary rounded-pill px-4 text-decoration-none"
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
-              >
-                <i className="fas fa-user me-2"></i>
-                Profile
-              </Link>
-            </div>
+            <Link
+              to={`/profile/${username}`}
+              className="btn btn-primary rounded-pill px-4 text-decoration-none feed-profile-btn"
+            >
+              <i className="fas fa-user me-2"></i>
+              Profile
+            </Link>
           </div>
         </div>
       </nav>
@@ -361,7 +335,6 @@ const FeedPage = () => {
           {/* Main Feed */}
           <div className="col-lg-8 mx-auto feed-main">
             {feed.length === 0 ? (
-<<<<<<< HEAD
               <motion.div
                 className="text-center py-5"
                 variants={fadeInUp}
@@ -373,16 +346,7 @@ const FeedPage = () => {
                     <div className="display-1 text-muted mb-3">📷</div>
                     <h4 className="card-title mb-3">No Posts Yet</h4>
                     <p className="card-text text-muted mb-4">Follow users to see their posts or create your own!</p>
-                    <button className="btn btn-primary px-4 feed-cta-btn">
-=======
-              <div className="text-center py-5">
-                <div className={`card border-0 shadow-sm ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`}>
-                  <div className="card-body py-5">
-                    <div className="display-1 text-muted mb-3">📷</div>
-                    <h4 className="card-title mb-3">No Posts Yet</h4>
-                    <p className={`card-text mb-4 ${darkMode ? 'text-light' : 'text-muted'}`}>Follow users to see their posts or create your own!</p>
-                    <Link to="/post" className="btn btn-primary px-4">
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
+                    <Link to="/post" className="btn btn-primary px-4 feed-cta-btn">
                       Create Your First Post
                     </Link>
                   </div>
@@ -402,7 +366,6 @@ const FeedPage = () => {
                   const hasImage = post.image || post.imageUrl;
 
                   return (
-<<<<<<< HEAD
                     <motion.div
                       className="card mb-4 shadow-sm border-0 rounded-3 overflow-hidden feed-card"
                       key={post._id}
@@ -417,14 +380,6 @@ const FeedPage = () => {
                         <div className="d-flex align-items-center">
                           <div className="rounded-circle overflow-hidden me-3 border border-3 border-primary feed-post-avatar" style={{width: '50px', height: '50px'}}>
                             <img 
-=======
-                    <div className={`card mb-4 shadow-sm border-0 rounded-3 overflow-hidden ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`} key={post._id}>
-                      {/* Post Header */}
-                      <div className={`card-header border-0 d-flex align-items-center justify-content-between py-3 ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`}>
-                        <div className="d-flex align-items-center">
-                          <div className="rounded-circle overflow-hidden me-3 border border-3 border-primary" style={{ width: '50px', height: '50px' }}>
-                            <img
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
                               src={post.author?.profilePic || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`}
                               alt="Profile"
                               className="w-100 h-100 object-fit-cover"
@@ -438,11 +393,7 @@ const FeedPage = () => {
                             </small>
                           </div>
                         </div>
-<<<<<<< HEAD
-                        <button className="btn btn-link text-muted feed-ghost-btn">
-=======
-                        <button className={`btn btn-link ${darkMode ? "text-light" : "text-muted"}`}>
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
+                        <button className={`btn btn-link ${darkMode ? "text-light" : "text-muted"} feed-ghost-btn`}>
                           <i className="fas fa-ellipsis-h"></i>
                         </button>
                       </div>
@@ -518,17 +469,10 @@ const FeedPage = () => {
                           <h5 className="fw-bold mb-3">{post.caption || "No caption"}</h5>
 
                           {/* Post Actions */}
-<<<<<<< HEAD
                             <div className="d-flex justify-content-between align-items-center mb-3 feed-actions">
                               <div className="d-flex gap-3 feed-action-group">
                               <button 
                                   className="btn btn-link p-0 text-decoration-none feed-action-btn"
-=======
-                          <div className="d-flex justify-content-between align-items-center mb-3">
-                            <div className="d-flex gap-3">
-                              <button
-                                className="btn btn-link p-0 text-decoration-none"
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
                                 onClick={() => handleLike(post._id)}
                               >
                                 {isLiked ? (
@@ -537,34 +481,20 @@ const FeedPage = () => {
                                   <FaRegHeart className={darkMode ? "text-white" : "text-dark"} size={24} />
                                 )}
                               </button>
-<<<<<<< HEAD
                               <button 
                                   className="btn btn-link p-0 text-decoration-none feed-action-btn"
-=======
-                              <button
-                                className="btn btn-link p-0 text-decoration-none"
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
                                 onClick={() => openCommentModal(post._id)}
                               >
                                 <FaCommentDots className={darkMode ? "text-white" : "text-dark"} size={24} />
                               </button>
-<<<<<<< HEAD
                               <button 
                                   className="btn btn-link p-0 text-decoration-none feed-action-btn"
-=======
-                              <button
-                                className="btn btn-link p-0 text-decoration-none"
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
                                 onClick={() => copyShareLink(post._id)}
                               >
                                 <FaShare className={darkMode ? "text-white" : "text-dark"} size={24} />
                               </button>
                             </div>
-<<<<<<< HEAD
-                              <span className="text-muted feed-like-count">
-=======
-                            <span className={darkMode ? "text-light" : "text-muted"}>
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
+                              <span className={`${darkMode ? "text-light" : "text-muted"} feed-like-count`}>
                               <i className="fas fa-heart text-danger me-1"></i>
                               {likeCount} likes
                             </span>

@@ -111,18 +111,6 @@ const UserProfile = () => {
   }
 
   return (
-<<<<<<< HEAD
-    <div className="container mt-4">
-      <div className="text-center mb-4">
-        <img
-          src={`https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff&size=128`}
-          className="rounded-circle mb-3"
-          alt={user.username}
-          style={{ width: "128px", height: "128px" }}
-        />
-        <h4>Hello</h4>
-        <p className="text-muted">{user.displayName || "No display name"}</p>
-=======
     <div className="container py-4" style={{ maxWidth: "935px" }}>
       {/* Profile Header */}
       <div className="row mb-5">
@@ -200,7 +188,6 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
->>>>>>> ed6ea444a2e8bab6a99d346036f81d5067140539
       </div>
 
       {/* Story Highlights / Divider (Visual only placeholder) */}
