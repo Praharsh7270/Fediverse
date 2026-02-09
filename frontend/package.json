@@ -20,7 +20,7 @@
     "dayjs": "^1.11.13",
     "dompurify": "^3.2.6",
     "flowbite": "^3.1.2",
-    "framer-motion": "^12.23.12",
+    "framer-motion": "^12.33.0",
     "gl-matrix": "^3.4.3",
     "gsap": "^3.13.0",
     "jwt-decode": "^4.0.0",

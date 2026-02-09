@@ -1,8 +1,137 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
+/* ---------------- Animations ---------------- */
+const pageVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+};
+
+/* ---------------- Styles ---------------- */
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "#f5f7fb",
+    color: "#0f172a",
+  },
+  container: {
+    maxWidth: 980,
+    margin: "0 auto",
+    padding: "24px 20px 48px",
+  },
+  topBar: {
+    position: "sticky",
+    top: 0,
+    zIndex: 10,
+    backdropFilter: "blur(12px)",
+    background: "rgba(255,255,255,0.85)",
+    borderBottom: "1px solid rgba(15,23,42,0.08)",
+  },
+  topBarInner: {
+    maxWidth: 980,
+    margin: "0 auto",
+    padding: "14px 20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    fontWeight: 700,
+    letterSpacing: 0.3,
+  },
+  badge: {
+    fontSize: 12,
+    color: "#334155",
+    background: "#e2e8f0",
+    padding: "4px 10px",
+    borderRadius: 999,
+  },
+  profileCard: {
+    background: "#ffffff",
+    borderRadius: 20,
+    padding: "24px",
+    boxShadow: "0 18px 45px rgba(15,23,42,0.08)",
+    border: "1px solid rgba(15,23,42,0.06)",
+    display: "grid",
+    gridTemplateColumns: "120px 1fr",
+    gap: 20,
+    alignItems: "center",
+  },
+  avatar: {
+    width: 110,
+    height: 110,
+    borderRadius: "50%",
+    border: "4px solid #ffffff",
+    boxShadow: "0 12px 30px rgba(15,23,42,0.18)",
+  },
+  name: {
+    fontSize: 22,
+    fontWeight: 700,
+    marginBottom: 6,
+  },
+  handle: {
+    fontSize: 14,
+    color: "#64748b",
+    marginBottom: 14,
+  },
+  stats: {
+    display: "flex",
+    gap: 20,
+    fontSize: 14,
+    color: "#475569",
+  },
+  statBox: {
+    background: "#f8fafc",
+    borderRadius: 12,
+    padding: "10px 14px",
+    border: "1px solid rgba(15,23,42,0.06)",
+  },
+  tabsWrap: {
+    marginTop: 20,
+    background: "#ffffff",
+    borderRadius: 14,
+    padding: 6,
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 6,
+    border: "1px solid rgba(15,23,42,0.06)",
+    boxShadow: "0 10px 24px rgba(15,23,42,0.06)",
+  },
+  tab: {
+    padding: "10px 12px",
+    borderRadius: 10,
+    border: "none",
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
+  listCard: {
+    marginTop: 16,
+    borderRadius: 16,
+    overflow: "hidden",
+    background: "#ffffff",
+    boxShadow: "0 20px 40px rgba(15,23,42,0.08)",
+    border: "1px solid rgba(15,23,42,0.06)",
+  },
+  emptyState: {
+    padding: 48,
+    textAlign: "center",
+    color: "#64748b",
+  },
+  footer: {
+    textAlign: "center",
+    padding: 18,
+    fontSize: 13,
+    color: "#94a3b8",
+  },
+};
+
+/* ---------------- Component ---------------- */
 const FollowersPage = () => {
   const { username } = useParams();
   const [view, setView] = useState("followers");
@@ -12,121 +141,71 @@ const FollowersPage = () => {
   const [error, setError] = useState(null);
   const [totalFollowers, setTotalFollowers] = useState(0);
   const [totalFollowing, setTotalFollowing] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null); // Add current user state
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch current user (you'll need to implement this based on your auth system)
+  /* -------- Fetch current user (placeholder) -------- */
   useEffect(() => {
-    // This is a placeholder - replace with your actual current user fetch logic
     const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get('/api/me'); // Adjust this endpoint
-        setCurrentUser(response.data);
-      } catch (err) {
-        console.error("Error fetching current user:", err);
+        const res = await axios.get("/api/me");
+        setCurrentUser(res.data);
+      } catch {
+        setCurrentUser(null);
       }
     };
     fetchCurrentUser();
   }, []);
 
+  /* -------- ActivityPub collection handler -------- */
   const fetchCollection = async (url) => {
-    try {
-      const headers = {
-        Accept: "application/activity+json",
-        "ngrok-skip-browser-warning": "true",
-      };
+    const headers = {
+      Accept: "application/activity+json",
+      "ngrok-skip-browser-warning": "true",
+    };
 
-      const response = await axios.get(url, { headers });
-      console.log(`Response from ${url}:`, response.data);
+    const res = await axios.get(url, { headers });
 
-      if (response.data.orderedItems) {
-        return {
-          items: response.data.orderedItems,
-          total: response.data.totalItems || 0
-        };
-      } else if (response.data.first?.orderedItems) {
-        return {
-          items: response.data.first.orderedItems,
-          total: response.data.first.totalItems || response.data.totalItems || 0
-        };
-      } else if (response.data.items) {
-        return {
-          items: response.data.items,
-          total: response.data.totalItems || 0
-        };
-      } else if (Array.isArray(response.data)) {
-        return {
-          items: response.data,
-          total: response.data.length
-        };
-      }
-
-      return { items: [], total: 0 };
-    } catch (err) {
-      console.error(`Error fetching ${url}:`, err);
-      throw err;
+    if (res.data.orderedItems) {
+      return { items: res.data.orderedItems, total: res.data.totalItems || 0 };
     }
+    if (res.data.first?.orderedItems) {
+      return {
+        items: res.data.first.orderedItems,
+        total: res.data.first.totalItems || res.data.totalItems || 0,
+      };
+    }
+    if (res.data.items) {
+      return { items: res.data.items, total: res.data.totalItems || 0 };
+    }
+    if (Array.isArray(res.data)) {
+      return { items: res.data, total: res.data.length };
+    }
+    return { items: [], total: 0 };
   };
 
+  /* -------- Fetch followers + following -------- */
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const baseUrl = process.env.REACT_APP_API_URL || "https://5e52fc7be047.ngrok-free.app";
-      const followersUrl = `${baseUrl}/users/${username}/followers`;
-      const followingUrl = `${baseUrl}/users/${username}/following`;
+      const baseUrl =
+        process.env.REACT_APP_API_URL ||
+        "https://5e52fc7be047.ngrok-free.app";
 
-      const [followersData, followingData] = await Promise.all([
-        fetchCollection(followersUrl),
-        fetchCollection(followingUrl)
+      const [f1, f2] = await Promise.all([
+        fetchCollection(`${baseUrl}/users/${username}/followers`),
+        fetchCollection(`${baseUrl}/users/${username}/following`),
       ]);
 
-      setFollowers(followersData.items);
-      setFollowing(followingData.items);
-      setTotalFollowers(followersData.total);
-      setTotalFollowing(followingData.total);
-
+      setFollowers(f1.items);
+      setFollowing(f2.items);
+      setTotalFollowers(f1.total);
+      setTotalFollowing(f2.total);
     } catch (err) {
-      console.error("API Error:", err);
-      setError(err.response?.data?.message || err.message || "Failed to fetch data");
+      setError("Failed to load followers");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const removeFollower = async (followerUsername) => {
-    try {
-      const baseUrl = process.env.REACT_APP_API_URL || "https://5e52fc7be047.ngrok-free.app";
-      await axios.delete(`${baseUrl}/users/${username}/followers/${followerUsername}`);
-      
-      // Update local state
-      setFollowers(followers.filter(f => {
-        const url = typeof f === 'string' ? f : f.url;
-        return !url.endsWith(`/users/${followerUsername}`);
-      }));
-      setTotalFollowers(totalFollowers - 1);
-      
-    } catch (err) {
-      console.error("Error removing follower:", err);
-      setError(err.response?.data?.message || err.message || "Failed to remove follower");
-    }
-  };
-
-  const unfollowUser = async (followingUsername) => {
-    try {
-      const baseUrl = process.env.REACT_APP_API_URL || "https://5e52fc7be047.ngrok-free.app";
-      await axios.delete(`${baseUrl}/users/${username}/following/${followingUsername}`);
-      
-      // Update local state
-      setFollowing(following.filter(f => {
-        const url = typeof f === 'string' ? f : f.url;
-        return !url.endsWith(`/users/${followingUsername}`);
-      }));
-      setTotalFollowing(totalFollowing - 1);
-      
-    } catch (err) {
-      console.error("Error unfollowing user:", err);
-      setError(err.response?.data?.message || err.message || "Failed to unfollow user");
     }
   };
 
@@ -134,171 +213,255 @@ const FollowersPage = () => {
     fetchData();
   }, [username]);
 
+  /* -------- Utils -------- */
   const cleanProfileUrl = (url) => {
-    if (!url) return "";
     try {
-      const urlObj = new URL(url);
-      return `${urlObj.protocol}//${urlObj.hostname}${urlObj.pathname}`.replace(/\/+$/, "");
+      const u = new URL(url);
+      return `${u.protocol}//${u.hostname}${u.pathname}`.replace(/\/+$/, "");
     } catch {
-      return url.toString().replace(/\/+$/, "");
+      return url;
     }
   };
 
   const getUsernameFromUrl = (url) => {
-    try {
-      const cleaned = cleanProfileUrl(url);
-      const parts = cleaned.split('/');
-      return parts[parts.length - 1] || parts[parts.length - 2] || "user";
-    } catch {
-      return "user";
-    }
+    const parts = cleanProfileUrl(url).split("/");
+    return parts[parts.length - 1] || "user";
   };
 
+  /* -------- Card renderer -------- */
   const renderUserItem = (url) => {
     const profileUrl = cleanProfileUrl(url);
     const uname = getUsernameFromUrl(profileUrl);
-    const avatarUrl = `https://ui-avatars.com/api/?name=${uname}&background=random&color=fff&size=48`;
-    const isCurrentUserProfile = currentUser && currentUser.username === username;
+    const avatar = `https://ui-avatars.com/api/?name=${uname}&background=random&color=fff&size=64`;
+    const isOwnProfile =
+      currentUser && currentUser.username === username;
 
     return (
-      <div key={profileUrl} className="list-group-item d-flex align-items-center">
+      <motion.div
+        key={profileUrl}
+        layout
+        variants={itemVariants}
+        initial="hidden"
+        animate="visible"
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.25 }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+          padding: "16px 18px",
+          borderBottom: "1px solid rgba(15,23,42,0.06)",
+          background: "#ffffff",
+        }}
+      >
         <img
-          src={avatarUrl}
+          src={avatar}
           alt={uname}
-          className="rounded-circle me-3"
-          style={{ width: 50, height: 50, objectFit: "cover" }}
-          onError={(e) => {
-            e.target.src = `https://ui-avatars.com/api/?name=${uname}&background=random&color=fff&size=48`;
+          style={{
+            width: 54,
+            height: 54,
+            borderRadius: "50%",
+            boxShadow: "0 10px 20px rgba(15,23,42,0.18)",
           }}
         />
-        <div className="flex-grow-1">
-          <strong>@{uname}</strong>
-          <div className="text-muted small text-truncate" style={{ maxWidth: "200px" }}>
+
+        <div style={{ flex: 1, overflow: "hidden" }}>
+          <div style={{ fontWeight: 700, fontSize: 15 }}>@{uname}</div>
+          <div
+            style={{
+              fontSize: 12,
+              color: "#64748b",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {profileUrl}
           </div>
         </div>
-        <div className="d-flex gap-2">
-          <a
-            href={profileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-sm btn-outline-primary"
+
+        <a
+          href={profileUrl}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            fontSize: 13,
+            padding: "7px 12px",
+            borderRadius: 10,
+            border: "1px solid #0ea5e9",
+            color: "#0ea5e9",
+            textDecoration: "none",
+            fontWeight: 600,
+          }}
+        >
+          View
+        </a>
+
+        {isOwnProfile && (
+          <button
+            style={{
+              fontSize: 13,
+              padding: "7px 12px",
+              borderRadius: 10,
+              border: "1px solid #ef4444",
+              background: "#fff5f5",
+              color: "#ef4444",
+              fontWeight: 600,
+            }}
           >
-            View
-          </a>
-          {isCurrentUserProfile && (
-            view === "followers" ? (
-              <button
-                className="btn btn-sm btn-outline-danger"
-                onClick={() => removeFollower(uname)}
-              >
-                Remove
-              </button>
-            ) : (
-              <button
-                className="btn btn-sm btn-outline-danger"
-                onClick={() => unfollowUser(uname)}
-              >
-                Unfollow
-              </button>
-            )
-          )}
-        </div>
-      </div>
+            {view === "followers" ? "Remove" : "Unfollow"}
+          </button>
+        )}
+      </motion.div>
     );
   };
 
-  // ... rest of your component code remains the same ...
-
+  /* ---------------- UI ---------------- */
   return (
-    <div className="instagram-theme" style={{ backgroundColor: "#fafafa", minHeight: "100vh" }}>
-      <header className="navbar navbar-light bg-white border-bottom sticky-top">
-        <div className="container">
-          <a className="navbar-brand mx-auto" href="#">
-            <h3 className="m-0" style={{ fontFamily: "cursive" }}>SocialApp</h3>
-          </a>
+    <div style={styles.page} className="followers-page">
+      {/* Header */}
+      <div style={styles.topBar} className="followers-topbar">
+        <div style={styles.topBarInner} className="followers-topbar-inner">
+          <div>SocialApp</div>
+          <div style={styles.badge}>Followers Hub</div>
         </div>
-      </header>
+      </div>
 
-      <div className="container py-4">
-        <div className="row align-items-center">
-          <div className="col-md-2 text-center">
-            <img
-              src={`https://ui-avatars.com/api/?name=${username}&background=random&color=fff&size=96`}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: "100px", height: "100px", border: "2px solid #e1306c" }}
-            />
-          </div>
-          <div className="col-md-10">
-            <h4 className="mb-1">@{username}</h4>
-            <div className="d-flex gap-4">
-              <span><strong>{totalFollowers}</strong> followers</span>
-              <span><strong>{totalFollowing}</strong> following</span>
+      <div style={styles.container} className="followers-container">
+        {/* Profile */}
+        <motion.div
+          variants={pageVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ duration: 0.4 }}
+          style={styles.profileCard}
+          className="followers-profile-card"
+        >
+          <img
+            src={`https://ui-avatars.com/api/?name=${username}&background=random&color=fff&size=128`}
+            alt="profile"
+            style={styles.avatar}
+            className="followers-avatar"
+          />
+          <div>
+            <div style={styles.name}>@{username}</div>
+            <div style={styles.handle}>
+              Discover who follows and who you follow.
+            </div>
+            <div style={styles.stats} className="followers-stats">
+              <div style={styles.statBox} className="followers-stat-box">
+                <strong>{totalFollowers}</strong> followers
+              </div>
+              <div style={styles.statBox} className="followers-stat-box">
+                <strong>{totalFollowing}</strong> following
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
 
-      <div className="container">
-        <div className="btn-group mb-3 w-100" role="group">
-          <button
-            className={`btn ${view === "followers" ? "btn-dark" : "btn-outline-dark"}`}
-            onClick={() => setView("followers")}
-          >
-            Followers
-          </button>
-          <button
-            className={`btn ${view === "following" ? "btn-dark" : "btn-outline-dark"}`}
-            onClick={() => setView("following")}
-          >
-            Following
-          </button>
+        {/* Tabs */}
+        <div style={styles.tabsWrap} className="followers-tabs">
+          {["followers", "following"].map((t) => {
+            const active = view === t;
+            return (
+              <button
+                key={t}
+                onClick={() => setView(t)}
+                style={{
+                  ...styles.tab,
+                  background: active ? "#0f172a" : "#f8fafc",
+                  color: active ? "#ffffff" : "#0f172a",
+                }}
+                className="followers-tab"
+              >
+                {t}
+              </button>
+            );
+          })}
         </div>
-      </div>
 
-      <div className="container pb-5">
-        <div className="card shadow-sm">
-          <div className="card-body p-0">
-            {loading ? (
-              <div className="text-center py-5">
-                <div className="spinner-border text-primary" />
-                <p className="mt-3">Loading {view}...</p>
-              </div>
-            ) : error ? (
-              <div className="alert alert-danger m-3">
-                <strong>Error:</strong> {error}
-                <button
-                  className="btn btn-sm btn-outline-danger ms-2"
-                  onClick={fetchData}
+        {/* List */}
+        <div style={styles.listCard} className="followers-list">
+          {loading ? (
+            <div style={styles.emptyState}>Loading...</div>
+          ) : error ? (
+            <div style={{ ...styles.emptyState, color: "#ef4444" }}>
+              {error}
+            </div>
+          ) : (
+            <AnimatePresence>
+              {(view === "followers" ? followers : following).length === 0 ? (
+                <motion.div
+                  style={styles.emptyState}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                 >
-                  Retry
-                </button>
-              </div>
-            ) : (
-              <div className="list-group list-group-flush">
-                {(view === "followers" ? followers : following).length === 0 ? (
-                  <div className="text-center py-5 text-muted">
-                    {view === "followers" 
-                      ? "No followers yet" 
-                      : "Not following anyone"}
-                  </div>
-                ) : (
-                  (view === "followers" ? followers : following).map(renderUserItem)
-                )}
-              </div>
-            )}
-          </div>
+                  {view === "followers"
+                    ? "No followers yet"
+                    : "Not following anyone"}
+                </motion.div>
+              ) : (
+                (view === "followers" ? followers : following).map(
+                  renderUserItem
+                )
+              )}
+            </AnimatePresence>
+          )}
         </div>
       </div>
 
-      <nav className="navbar fixed-bottom navbar-light bg-white border-top">
-        <div className="container justify-content-center">
-          <span className="navbar-text text-muted">
-            © {new Date().getFullYear()} SocialApp
-          </span>
-        </div>
-      </nav>
+      {/* Footer */}
+      <div style={styles.footer} className="followers-footer">
+        © {new Date().getFullYear()} SocialApp
+      </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .followers-topbar-inner {
+            padding: 12px 16px !important;
+          }
+          .followers-container {
+            padding: 16px 14px 32px !important;
+          }
+          .followers-profile-card {
+            grid-template-columns: 1fr !important;
+            text-align: center !important;
+          }
+          .followers-avatar {
+            margin: 0 auto !important;
+          }
+          .followers-stats {
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+          }
+          .followers-stat-box {
+            min-width: 120px !important;
+          }
+          .followers-tabs {
+            grid-template-columns: 1fr !important;
+          }
+          .followers-tab {
+            width: 100% !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .followers-topbar-inner {
+            flex-direction: column !important;
+            gap: 6px !important;
+          }
+          .followers-profile-card {
+            padding: 18px !important;
+          }
+          .followers-avatar {
+            width: 92px !important;
+            height: 92px !important;
+          }
+          .followers-footer {
+            padding: 12px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -99,4 +99,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfil;
+export default UserProfile;

@@ -67,7 +67,7 @@ const UserProfile = () => {
           alt={user.username}
           style={{ width: "128px", height: "128px" }}
         />
-        <h4>@{user.username}</h4>
+        <h4>Hello</h4>
         <p className="text-muted">{user.displayName || "No display name"}</p>
       </div>
 
