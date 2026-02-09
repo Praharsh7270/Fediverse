@@ -81,7 +81,7 @@ This document describes all available API endpoints in the Fediverse backend.
 **Response:**
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": "<JWT_TOKEN>",
   "user": {
     "_id": "507f1f77bcf86cd799439011",
     "username": "john_doe",
@@ -774,7 +774,7 @@ This document describes all available API endpoints in the Fediverse backend.
 
 Endpoints marked with **Auth: Required** need a JWT token in the Authorization header:
 
-```
+```text
 Authorization: Bearer <your-jwt-token>
 ```
 
