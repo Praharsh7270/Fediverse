@@ -27,3 +27,6 @@ coverage
 # User uploads
 upload/
 uploads/
+repro_*.js
+test*.js
+output_after_fix.txt

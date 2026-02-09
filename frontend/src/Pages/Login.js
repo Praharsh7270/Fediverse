@@ -1,7 +1,7 @@
 
 import React, { useState, useContext } from "react";
 import API from "../utils/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function Login() {
@@ -131,9 +131,9 @@ function Login() {
               </div>
 
               <div className="text-end mb-4">
-                <a href="/forgot-password" className="text-decoration-none small text-muted">
+                <Link to="/forgot-password" className="text-decoration-none small text-muted">
                   Forgot Password?
-                </a>
+                </Link>
               </div>
 
               <div className="d-grid gap-2 mb-3">

@@ -272,3 +272,65 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const otp = crypto.randomInt(100000, 1000000).toString();
+    const verifyOtpExpairy = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    user.verifyOtp = otp;
+    user.verifyOtpExpairy = verifyOtpExpairy;
+    await user.save();
+
+    const mailoption = {
+      to: email,
+      subject: "Reset your Password 🔐",
+      text: `Hello ${user.username},\n\nYou requested to reset your password.\n\nYour One-Time Password (OTP) is:\n\n👉 ${otp}\n\nThis OTP is valid for 10 minutes.\nIf you did not request this, please ignore this email.\n\n— Team Fediverse`
+    };
+
+    await sendEmail(mailoption);
+
+    res.json({ success: true, message: "OTP sent to your email" });
+
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email, otp, newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ success: false, message: "Passwords do not match" });
+  }
+
+  try {
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (user.verifyOtp !== otp || user.verifyOtpExpairy < Date.now()) {
+      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+    }
+
+    user.password = newPassword; // Will be hashed by pre-save hook
+    user.verifyOtp = undefined;
+    user.verifyOtpExpairy = undefined;
+    await user.save();
+
+    res.json({ success: true, message: "Password reset successfully. You can now login." });
+
+  } catch (error) {
+    console.error("Reset password error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
