@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
@@ -12,11 +12,9 @@ import {
   FaShare,
   FaSun,
   FaMoon,
-
   FaCommentDots,
   FaTrash,
-  FaEdit,
-  FaTimes
+  FaEdit
 } from "react-icons/fa";
 
 const feedContainerVariants = {
@@ -47,7 +45,7 @@ const fadeInUp = {
 const FeedPage = () => {
   const [feed, setFeed] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
-  const { token, user: authUser } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -63,23 +61,7 @@ const FeedPage = () => {
   const [editingComment, setEditingComment] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        if (token) {
-          const decoded = jwtDecode(token);
-          setUserId(decoded.id);
-        }
-        await fetchFeed();
-      } catch (err) {
-        console.error("Initialization error:", err);
-        setError("Failed to initialize. Please refresh the page.");
-      }
-    };
-    initialize();
-  }, [token]);
-
-  const fetchFeed = async () => {
+  const fetchFeed = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/feed`, {
@@ -96,12 +78,35 @@ const FeedPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        if (token) {
+          const decoded = jwtDecode(token);
+          setUserId(decoded.id);
+        }
+        await fetchFeed();
+      } catch (err) {
+        console.error("Initialization error:", err);
+        setError("Failed to initialize. Please refresh the page.");
+      }
+    };
+    initialize();
+  }, [token, fetchFeed]);
 
   const handleLike = async (postId) => {
     if (!token || !postId) return;
 
+    // Determine HTTP method BEFORE optimistic update to avoid stale state
+    const targetPost = feed.find(p => p._id === postId);
+    const currentLikes = targetPost?.likes || [];
+    const isCurrentlyLiked = currentLikes.includes(userId);
+    const method = isCurrentlyLiked ? "delete" : "post";
+
     try {
+      // Optimistic update
       setFeed(prevFeed =>
         prevFeed.map(post => {
           if (post._id === postId) {
@@ -117,10 +122,6 @@ const FeedPage = () => {
           return post;
         })
       );
-
-      const targetPost = feed.find(p => p._id === postId);
-      const currentLikes = targetPost?.likes || [];
-      const method = currentLikes.includes(userId) ? "delete" : "post";
 
       await axios({
         method,
@@ -505,15 +506,15 @@ const FeedPage = () => {
                             <div className={`mt-4 pt-3 border-top ${darkMode ? 'border-secondary' : ''}`}>
                               <h6 className="fw-bold mb-3">Quick Links</h6>
                               <div className="d-flex flex-wrap gap-2">
-                                <a href="#" className="btn btn-outline-primary btn-sm rounded-pill">
+                                <button type="button" className="btn btn-outline-primary btn-sm rounded-pill">
                                   View Dashboard
-                                </a>
-                                <a href="#" className="btn btn-outline-success btn-sm rounded-pill">
+                                </button>
+                                <button type="button" className="btn btn-outline-success btn-sm rounded-pill">
                                   Lifestyle Check
-                                </a>
-                                <a href="#" className="btn btn-outline-info btn-sm rounded-pill">
+                                </button>
+                                <button type="button" className="btn btn-outline-info btn-sm rounded-pill">
                                   Explore Data
-                                </a>
+                                </button>
                               </div>
                             </div>
                           )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -157,34 +157,59 @@ const FollowersPage = () => {
   }, []);
 
   /* -------- ActivityPub collection handler -------- */
-  const fetchCollection = async (url) => {
+  const fetchCollection = useCallback(async (url) => {
+    /* -------- Normalize ActivityPub item to URL string -------- */
+    const normalizeItem = (item) => {
+      // ActivityPub responses can be URL strings or actor objects
+      if (typeof item === "string") {
+        return item;
+      }
+      // Handle actor objects with id, url, or href properties
+      if (typeof item === "object" && item !== null) {
+        return item.id || item.url || item.href || null;
+      }
+      return null;
+    };
+
     const headers = {
       Accept: "application/activity+json",
       "ngrok-skip-browser-warning": "true",
     };
 
-    const res = await axios.get(url, { headers });
+    try {
+      const res = await axios.get(url, { headers, timeout: 10000 });
 
-    if (res.data.orderedItems) {
-      return { items: res.data.orderedItems, total: res.data.totalItems || 0 };
+      let items = [];
+      let total = 0;
+
+      if (res.data.orderedItems) {
+        items = res.data.orderedItems;
+        total = res.data.totalItems || 0;
+      } else if (res.data.first?.orderedItems) {
+        items = res.data.first.orderedItems;
+        total = res.data.first.totalItems || res.data.totalItems || 0;
+      } else if (res.data.items) {
+        items = res.data.items;
+        total = res.data.totalItems || 0;
+      } else if (Array.isArray(res.data)) {
+        items = res.data;
+        total = res.data.length;
+      }
+
+      // Normalize items to URL strings, filtering out invalid entries
+      const normalizedItems = items
+        .map(normalizeItem)
+        .filter((url) => url !== null);
+
+      return { items: normalizedItems, total };
+    } catch (err) {
+      console.error(`Error fetching collection from ${url}:`, err);
+      return { items: [], total: 0 };
     }
-    if (res.data.first?.orderedItems) {
-      return {
-        items: res.data.first.orderedItems,
-        total: res.data.first.totalItems || res.data.totalItems || 0,
-      };
-    }
-    if (res.data.items) {
-      return { items: res.data.items, total: res.data.totalItems || 0 };
-    }
-    if (Array.isArray(res.data)) {
-      return { items: res.data, total: res.data.length };
-    }
-    return { items: [], total: 0 };
-  };
+  }, []);
 
   /* -------- Fetch followers + following -------- */
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -207,11 +232,11 @@ const FollowersPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [username, fetchCollection]);
 
   useEffect(() => {
     fetchData();
-  }, [username]);
+  }, [username, fetchData]);
 
   /* -------- Utils -------- */
   const cleanProfileUrl = (url) => {
