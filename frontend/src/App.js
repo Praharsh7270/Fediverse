@@ -32,7 +32,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/login" element={<Login />} />
             <Route path="/post" element={<PostForm />} />
-            <Route path="/profile/:username" element={<UserProfile />} />
+            <Route path="/profile/:username" element={<FollowersPage />} />
             <Route path="/debug-inbox" element={<InboxDebug />} />
             <Route path="/followers/:username" element={<FollowersPage />} />
             <Route path="/remote-search" element={<RemoteSearch />} />
