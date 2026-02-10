@@ -32,6 +32,55 @@ exports.getUserById = async (req, res) => {
   res.json(user);
 };
 
+exports.updateUser = async (req, res) => {
+  const user = req.user; // Assuming user is attached to req by auth middleware
+  const userId = req.params.id;
+  const { bio, age, displayName } = req.body;
+
+  if (!user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required or user not found" });
+  }
+  // Optional: Only allow user to update their own profile
+  if (user.id !== userId) {
+    return res.status(403).json({ error: "Forbidden: Cannot update another user" });
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { bio, age, displayName } },
+      { new: true, runValidators: true }
+    ).select("-password");
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: updatedUser,
+      message: "User updated successfully"
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update user", details: err.message });
+  }
+};
+exports.loginedUser = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    const userData = await User.findById(req.user.id).select("-password");
+    if (!userData) return res.status(404).json({ error: "User not found" });
+    res.json({ username: userData.username });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user", details: error.message });
+  }
+};
+
 
 
 

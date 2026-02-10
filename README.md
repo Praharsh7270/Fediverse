@@ -1,4 +1,4 @@
-# 🌍 Photoflux – Fediverse Compatible Photo Sharing Platform
+# 🌍 PhotoFlux – Fediverse Compatible Photo Sharing Platform
 
 Photoflux is a decentralized, Fediverse-compatible photo sharing social media platform built using the ActivityPub protocol.  
 It allows local and remote users (e.g., Mastodon users) to follow, interact, and exchange posts across federated servers.
@@ -180,6 +180,7 @@ Contributions are welcome!
 Please read CONTRIBUTING.md before submitting pull requests.
  
 ---
+
 ### License
 
 This project is licensed under the MIT License.
